@@ -30,8 +30,8 @@
         <li>your settings: the minimum points, whether the grey dot is on, and any sites you muted (Chrome may sync
             these between your own devices if you have Chrome sync turned on)</li>
         <li>a list of the pages you opened this week that were on Hacker News, which the popup counts ("3 pages
-            you read this week were on HN"). Only pages already in the public story list go on it, at most 500.
-            It's deleted at the start of each week.</li>
+            you read this week were on HN"). Only pages already in the public story list go on it, at most 500, and
+            never pages opened in incognito windows. It's deleted at the start of each week.</li>
     </ul>
     <p>Removing the extension deletes all of it.</p>
 
@@ -49,8 +49,17 @@
         It needs that to see the links on a page. A small script then collects the link addresses on each page you
         open and checks them against the same local list, inside your browser. It doesn't read anything else on
         the page, and the addresses aren't sent anywhere. The badges are drawn so the page can't read them, but a
-        page could still notice that something was added next to its links. Untick the setting and the extension gives the permission
+        page could still notice that something was added next to its links. To keep that from revealing your
+        settings, the badges always use the full 400-point list and ignore your own minimum and muted sites. Untick the setting and the extension gives the permission
         back; you can also revoke it in chrome://extensions.</p>
+
+    <h2>About Chrome's permission prompts</h2>
+    <p>At install, Chrome says the extension can "read your browsing history". That is the tabs permission: the button
+        has to see each tab's address to check it against the list. If you turn on points next to links, Chrome
+        asks to let it "read and change all your data on all websites". The extension uses that only to read link
+        addresses. In both cases nothing is sent anywhere.</p>
+    <p>The code that builds the story list is public. The extension's own code isn't, but the package in the store
+        isn't minified, so you can read exactly what runs.</p>
 
     <h2>What the extension doesn't do</h2>
     <p>No analytics, no tracking, no ads, no accounts, no selling or sharing data, and no code loaded from
