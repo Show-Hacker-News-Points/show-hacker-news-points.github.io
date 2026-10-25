@@ -16,15 +16,16 @@
 
 <body>
     <h1><span class="logo">Y</span> Show Hacker News Points</h1>
-    <p>This site publishes every Hacker News story with 400 or more points, so the
+    <p>Every Hacker News story with 400 or more points, published as files for the
         <a href="https://chromewebstore.google.com/detail/hinpipjgmgkgadcckdnmhhdooolfapke">Reveal Top Hacker News Stories</a>
-        extension can tell you when the page you are reading was discussed without sending your browsing anywhere.
-        The extension downloads the whole list and checks pages on your device.</p>
-    <p>The list is rebuilt from the <a href="https://hn.algolia.com/api">Algolia Hacker News API</a> every six hours:</p>
+        extension. The extension checks the pages you visit against this list on your own machine, so it never has to
+        ask a server about them.</p>
+    <p>The list is rebuilt from the <a href="https://hn.algolia.com/api">Algolia HN API</a> every six hours.</p>
     <ul>
-        <li><a href="v2/index.json"><code>v2/index.json</code></a> for extension 1.2 and later, which names the archive of older stories</li>
-        <li><a href="feed.pb"><code>feed.pb</code></a> for extension 1.1 and earlier</li>
+        <li><a href="v2/index.json"><code>v2/index.json</code></a>: for extension 1.2 and later. It names the archive file that holds the older stories.</li>
+        <li><a href="feed.pb"><code>feed.pb</code></a>: for extension 1.1 and older.</li>
     </ul>
+    <p>Not affiliated with Hacker News or Y Combinator.</p>
 </body>
 
 </html>
