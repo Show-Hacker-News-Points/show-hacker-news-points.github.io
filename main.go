@@ -6,12 +6,14 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -39,7 +41,11 @@ func run(out string, minPoints, minStories int, storiesFile string, save bool) e
 	}
 	log.Printf("%d stories with at least %d points", len(stories), minPoints)
 
-	v2, err := buildFeedV2(stories, minPoints, time.Now())
+	disabled, err := readDisabledFeatures("disabled-features.txt")
+	if err != nil {
+		return err
+	}
+	v2, err := buildFeedV2(stories, minPoints, time.Now(), disabled)
 	if err != nil {
 		return err
 	}
@@ -58,6 +64,26 @@ func run(out string, minPoints, minStories int, storiesFile string, save bool) e
 		log.Printf("wrote %s (%d bytes)", name, len(data))
 	}
 	return nil
+}
+
+// readDisabledFeatures reads one feature name per line; blank lines and # comments are skipped,
+// and a missing file means nothing is disabled.
+func readDisabledFeatures(path string) ([]string, error) {
+	data, err := os.ReadFile(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	var features []string
+	for _, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimSpace(line)
+		if line != "" && !strings.HasPrefix(line, "#") {
+			features = append(features, line)
+		}
+	}
+	return features, nil
 }
 
 func loadStories(file string, save bool, minPoints int) ([]story, error) {

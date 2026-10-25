@@ -1,0 +1,3 @@
+# Extension features switched off for everyone through the feed, one name per line.
+# Use this when a feature misbehaves in the wild and a store review would take too long.
+# Known names: linkPoints (badges next to links).

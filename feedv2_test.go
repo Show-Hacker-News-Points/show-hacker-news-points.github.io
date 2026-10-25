@@ -3,6 +3,9 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 )
@@ -29,7 +32,7 @@ func TestFeedV2SplitsByAge(t *testing.T) {
 		{ID: 3, URL: "https://example.com/edge", Points: 500, CreatedAt: time.Date(2026, 9, 1, 0, 0, 0, 0, time.UTC).Unix()},
 		{ID: 4, URL: "", Points: 2000, CreatedAt: 0},
 	}
-	files, err := buildFeedV2(stories, 400, now)
+	files, err := buildFeedV2(stories, 400, now, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -54,7 +57,7 @@ func TestFeedV2SplitsByAge(t *testing.T) {
 	}
 
 	// Later in the same month the archive must be byte-identical, so clients keep their copy.
-	later, err := buildFeedV2(stories, 400, now.Add(5*24*time.Hour))
+	later, err := buildFeedV2(stories, 400, now.Add(5*24*time.Hour), nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,5 +66,39 @@ func TestFeedV2SplitsByAge(t *testing.T) {
 	}
 	if bytes.Equal(later.index, files.index) {
 		t.Error("index should carry the new generatedAt")
+	}
+}
+
+func TestFeedV2DisabledFeatures(t *testing.T) {
+	now, _ := time.Parse(time.RFC3339, "2026-10-24T21:00:00Z")
+	stories := []story{{ID: 1, URL: "https://example.com/a", Points: 500, CreatedAt: now.Unix()}}
+	off, err := buildFeedV2(stories, 400, now, []string{"linkPoints"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(off.index), `"disabled":["linkPoints"]`) {
+		t.Errorf("index lacks the disabled list: %s", off.index)
+	}
+	on, err := buildFeedV2(stories, 400, now, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(on.index), `"disabled"`) {
+		t.Errorf("an empty disabled list should be left out: %s", on.index)
+	}
+}
+
+func TestReadDisabledFeatures(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "disabled-features.txt")
+	if got, err := readDisabledFeatures(path); err != nil || got != nil {
+		t.Errorf("missing file: got %v, %v", got, err)
+	}
+	if err := os.WriteFile(path, []byte("# comment\n\nlinkPoints\n  other  \n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	got, err := readDisabledFeatures(path)
+	if err != nil || strings.Join(got, ",") != "linkPoints,other" {
+		t.Errorf("got %v, %v", got, err)
 	}
 }

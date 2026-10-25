@@ -28,3 +28,13 @@ The command refuses to write anything when the crawl finds fewer than `-min-stor
 ## Publishing
 
 `.github/workflows/feed.yml` rebuilds every six hours and deploys `public/` to GitHub Pages with the Actions deploy. Nothing is committed, so the repository stays small.
+
+## Operating the feed
+
+The feed went stale for three years once without anyone noticing, so these are the signals to watch:
+
+- **GitHub emails a failed "Build and publish feed" run.** Pages keeps serving the last good build. Rerun it from the Actions tab once the cause is fixed.
+- **GitHub emails a failed "Check feed freshness" run.** The live `v2/index.json` is over a day old, which means builds have been failing or have stopped. Both scheduled workflows re-enable themselves on every build, including failed ones, so GitHub's 60-day inactivity rule doesn't silence them.
+- **Rolling back a bad feed:** every build's artifact stays downloadable for 7 days under the run's Artifacts. Re-running an older successful run redeploys it.
+- **Switching an extension feature off for everyone:** add its name to `disabled-features.txt` and push. The next deploy, minutes later, lists it in `index.json`, and the extension honours it on its next daily refresh. Remove the line to switch it back on.
+- **Dependabot PRs** for Actions and Go modules arrive weekly and need merging, or the pinned action versions eventually stop running.

@@ -26,11 +26,14 @@ type v2Archive struct {
 }
 
 type v2Index struct {
-	Version     int                  `json:"version"`
-	MinPoints   int                  `json:"minPoints"`
-	GeneratedAt int64                `json:"generatedAt"`
-	Archive     string               `json:"archive"`
-	Sites       map[string][]v2Story `json:"sites"`
+	Version     int    `json:"version"`
+	MinPoints   int    `json:"minPoints"`
+	GeneratedAt int64  `json:"generatedAt"`
+	Archive     string `json:"archive"`
+	// Extension features to switch off for everyone, without a store review, e.g. "linkPoints"
+	// if the link badges break sites. Listed in disabled-features.txt.
+	Disabled []string             `json:"disabled,omitempty"`
+	Sites    map[string][]v2Story `json:"sites"`
 }
 
 // v2Story is encoded as [id, points, comments, createdAt, title, pageKey] to keep the
@@ -57,10 +60,10 @@ func archiveCutoff(now time.Time) time.Time {
 	return time.Date(year, month-1, 1, 0, 0, 0, 0, time.UTC)
 }
 
-func buildFeedV2(stories []story, minPoints int, now time.Time) (v2Files, error) {
+func buildFeedV2(stories []story, minPoints int, now time.Time, disabled []string) (v2Files, error) {
 	before := archiveCutoff(now).Unix()
 	archive := v2Archive{Version: 2, MinPoints: minPoints, Before: before, Sites: map[string][]v2Story{}}
-	index := v2Index{Version: 2, MinPoints: minPoints, GeneratedAt: now.Unix(), Sites: map[string][]v2Story{}}
+	index := v2Index{Version: 2, MinPoints: minPoints, GeneratedAt: now.Unix(), Disabled: disabled, Sites: map[string][]v2Story{}}
 	for _, s := range stories {
 		u, err := parseWebURL(s.URL)
 		if err != nil {
