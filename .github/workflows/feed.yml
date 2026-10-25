@@ -37,9 +37,11 @@ jobs:
         with:
           path: public
           retention-days: 7
-      # GitHub disables scheduled workflows after 60 days without repository activity,
-      # and this workflow no longer commits, so it re-enables itself on every run.
-      - run: gh workflow enable feed.yml
+      # GitHub disables scheduled workflows after 60 days without repository activity, and
+      # nothing commits here any more, so every run re-enables both scheduled workflows.
+      - run: |
+          gh workflow enable feed.yml
+          gh workflow enable freshness.yml
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}

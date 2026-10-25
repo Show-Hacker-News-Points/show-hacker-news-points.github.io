@@ -1,0 +1,24 @@
+name: Check feed freshness
+
+# The feed went stale for three years without anyone noticing. This fails, and GitHub emails
+# the repository owner, when the live index is more than a day old.
+on:
+  schedule:
+    - cron: "45 */12 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail when the live feed is more than a day old
+        run: |
+          generated=$(curl -fsS https://show-hacker-news-points.github.io/v2/index.json | jq -r .generatedAt)
+          age=$(( $(date +%s) - generated ))
+          echo "The live feed was generated $((age / 3600)) hours ago."
+          if [ "$age" -gt 86400 ]; then
+            echo "::error::The live feed is $((age / 3600)) hours old; check the 'Build and publish feed' runs."
+            exit 1
+          fi
