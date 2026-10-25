@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Show Hacker News Points</title>
+    <style>
+        :root { color-scheme: light dark; --orange: #ff6600; }
+        body { max-width: 640px; margin: 48px auto; padding: 0 16px; font: 16px/1.6 system-ui, sans-serif; }
+        h1 { display: flex; align-items: center; gap: 10px; font-size: 22px; }
+        .logo { display: inline-grid; place-items: center; width: 28px; height: 28px; background: var(--orange); color: #fff; font-weight: 700; }
+        code { font-size: 14px; }
+    </style>
+</head>
+
+<body>
+    <h1><span class="logo">Y</span> Show Hacker News Points</h1>
+    <p>This site publishes every Hacker News story with 400 or more points, so the
+        <a href="https://chromewebstore.google.com/detail/hinpipjgmgkgadcckdnmhhdooolfapke">Reveal Top Hacker News Stories</a>
+        extension can tell you when the page you are reading was discussed without sending your browsing anywhere.
+        The extension downloads the whole list and checks pages on your device.</p>
+    <p>The list is rebuilt from the <a href="https://hn.algolia.com/api">Algolia Hacker News API</a> every six hours:</p>
+    <ul>
+        <li><a href="feed-v2.json"><code>feed-v2.json</code></a> for extension 1.2 and later</li>
+        <li><a href="feed.pb"><code>feed.pb</code></a> for extension 1.1 and earlier</li>
+    </ul>
+</body>
+
+</html>

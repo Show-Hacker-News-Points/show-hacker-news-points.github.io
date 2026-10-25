@@ -1,0 +1,50 @@
+name: Build and publish feed
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  actions: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: go test ./...
+      # A failed or shrunken crawl stops here, and Pages keeps serving the last good feed.
+      - run: go run . -out public
+      - run: cp index.html public/
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
+      # GitHub disables scheduled workflows after 60 days without repository activity,
+      # and this workflow no longer commits, so it re-enables itself on every run.
+      - run: gh workflow enable feed.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
