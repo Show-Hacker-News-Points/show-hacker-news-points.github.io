@@ -41,6 +41,9 @@
         which pages you read. GitHub's own privacy statement covers what they do with request logs.</p>
     <p>A page address only leaves your browser when you click something that asks for it: <em>search</em> opens a
         Hacker News search on Algolia with that address, and <em>submit</em> opens Hacker News' submit page with it.
+        Choosing <em>Find this link on Hacker News</em> on a link opens its thread, or an Algolia search for the link's
+        address when the local list doesn't have it. Tracking parameters such as utm_source are removed first. The
+        Alt+Shift+Y shortcut only opens a thread the local list knows, and otherwise opens the popup.
         Searching from the address bar only goes to Algolia if nothing in the local list matches and you press
         Enter.</p>
 
