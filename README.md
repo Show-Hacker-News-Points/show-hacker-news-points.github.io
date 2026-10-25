@@ -9,7 +9,8 @@ The extension downloads the whole list and checks pages on the device, so browsi
 | File | Read by | Shape |
 |---|---|---|
 | `feed.pb` | extension 1.1 and earlier | protobuf + bloom filter keyed by `fnv_1a(pathname)` |
-| `feed-v2.json` | extension 1.2 and later | stories grouped by site, with titles and comment counts |
+| `v2/index.json` | extension 1.2 and later, daily | stories from the last one to two months, plus the archive's name |
+| `v2/archive-<hash>.json` | extension 1.2 and later, about monthly | older stories, whose points no longer change |
 
 `urlkey.go` and the extension's `feed.js` must compute the same site and page keys. `testdata/keys.json` is shared by both test suites.
 
@@ -17,7 +18,7 @@ The extension downloads the whole list and checks pages on the device, so browsi
 
 ```sh
 go test ./...
-go run . -out public                                     # crawl Algolia (~1 min) and write both feeds
+go run . -out public                                     # crawl Algolia (~1 min) and write all feeds
 go run . -out public -stories stories.json -save         # also keep the crawl for offline rebuilds
 go run . -out public -stories stories.json               # rebuild from a saved crawl
 ```

@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	out := flag.String("out", "public", "directory to write feed.pb and feed-v2.json into")
+	out := flag.String("out", "public", "directory to write feed.pb and v2/ into")
 	minPoints := flag.Int("min-points", 400, "smallest story score to include")
 	minStories := flag.Int("min-stories", 20000, "refuse to publish when the crawl finds fewer stories than this")
 	storiesFile := flag.String("stories", "", "read stories from this JSON file instead of crawling, or write them there after a crawl with -save")
@@ -43,13 +43,21 @@ func run(out string, minPoints, minStories int, storiesFile string, save bool) e
 	if err != nil {
 		return err
 	}
-	if err := os.MkdirAll(out, 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(out, "v2"), 0o755); err != nil {
 		return err
 	}
-	if err := os.WriteFile(filepath.Join(out, "feed.pb"), buildFeedV1(stories), 0o644); err != nil {
-		return err
+	files := map[string][]byte{
+		"feed.pb":                           buildFeedV1(stories),
+		filepath.Join("v2", v2.archiveName): v2.archive,
+		filepath.Join("v2", "index.json"):   v2.index,
 	}
-	return os.WriteFile(filepath.Join(out, "feed-v2.json"), v2, 0o644)
+	for name, data := range files {
+		if err := os.WriteFile(filepath.Join(out, name), data, 0o644); err != nil {
+			return err
+		}
+		log.Printf("wrote %s (%d bytes)", name, len(data))
+	}
+	return nil
 }
 
 func loadStories(file string, save bool, minPoints int) ([]story, error) {
