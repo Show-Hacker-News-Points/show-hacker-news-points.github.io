@@ -38,8 +38,10 @@ jobs:
           path: public
           retention-days: 7
       # GitHub disables scheduled workflows after 60 days without repository activity, and
-      # nothing commits here any more, so every run re-enables both scheduled workflows.
-      - run: |
+      # nothing commits here any more, so every run re-enables both scheduled workflows,
+      # including runs where the crawl failed: a broken crawl must not silence its own alarm.
+      - if: always()
+        run: |
           gh workflow enable feed.yml
           gh workflow enable freshness.yml
         env:
