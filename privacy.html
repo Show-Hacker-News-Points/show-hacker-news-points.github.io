@@ -17,7 +17,7 @@
 <body>
     <h1><span class="logo">▲</span> Privacy policy</h1>
     <p>For the <a href="https://chromewebstore.google.com/detail/hinpipjgmgkgadcckdnmhhdooolfapke">Reveal Top Hacker News Stories</a>
-        Chrome extension. Last updated October 25, 2026: the weekly count is now described as the list it is.</p>
+        Chrome extension. Last updated October 25, 2026: added the optional points next to links.</p>
 
     <p>Short version: the extension doesn't collect anything about you, and it doesn't send the pages you visit
         anywhere.</p>
@@ -43,6 +43,13 @@
         Hacker News search on Algolia with that address, and <em>submit</em> opens Hacker News' submit page with it.
         Searching from the address bar only goes to Algolia if nothing in the local list matches and you press
         Enter.</p>
+
+    <h2>Points next to links (off unless you turn it on)</h2>
+    <p>If you tick "points next to links" in the settings, Chrome asks you to let the extension read all sites.
+        It needs that to see the links on a page. A small script then collects the link addresses on each page you
+        open and checks them against the same local list, inside your browser. It doesn't read anything else on
+        the page, and the addresses aren't sent anywhere. Untick the setting and the extension gives the permission
+        back; you can also revoke it in chrome://extensions.</p>
 
     <h2>What the extension doesn't do</h2>
     <p>No analytics, no tracking, no ads, no accounts, no selling or sharing data, and no code loaded from
