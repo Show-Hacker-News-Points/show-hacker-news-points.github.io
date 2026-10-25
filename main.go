@@ -23,14 +23,15 @@ func main() {
 	minStories := flag.Int("min-stories", 20000, "refuse to publish when the crawl finds fewer stories than this")
 	storiesFile := flag.String("stories", "", "read stories from this JSON file instead of crawling, or write them there after a crawl with -save")
 	save := flag.Bool("save", false, "write the crawled stories to -stories")
+	maxAge := flag.Duration("max-age", 48*time.Hour, "refuse to publish when the newest story is older than this; 0 turns the check off, e.g. for a saved crawl")
 	flag.Parse()
 
-	if err := run(*out, *minPoints, *minStories, *storiesFile, *save); err != nil {
+	if err := run(*out, *minPoints, *minStories, *maxAge, *storiesFile, *save); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func run(out string, minPoints, minStories int, storiesFile string, save bool) error {
+func run(out string, minPoints, minStories int, maxAge time.Duration, storiesFile string, save bool) error {
 	stories, err := loadStories(storiesFile, save, minPoints)
 	if err != nil {
 		return err
@@ -38,6 +39,9 @@ func run(out string, minPoints, minStories int, storiesFile string, save bool) e
 	// A broken source must never replace a good feed with a near-empty one.
 	if len(stories) < minStories {
 		return fmt.Errorf("only %d stories found, below -min-stories %d; not publishing", len(stories), minStories)
+	}
+	if err := checkRecent(stories, maxAge, time.Now()); err != nil {
+		return err
 	}
 	log.Printf("%d stories with at least %d points", len(stories), minPoints)
 
@@ -62,6 +66,24 @@ func run(out string, minPoints, minStories int, storiesFile string, save bool) e
 			return err
 		}
 		log.Printf("wrote %s (%d bytes)", name, len(data))
+	}
+	return nil
+}
+
+// checkRecent catches a source that stopped indexing new stories. The story count stays above
+// -min-stories on old stories alone, so only the newest story's age shows it. HN produces a
+// 400-point story every few hours; the longest gap seen in October 2026 was 16 hours.
+func checkRecent(stories []story, maxAge time.Duration, now time.Time) error {
+	if maxAge == 0 {
+		return nil
+	}
+	var newest int64
+	for _, s := range stories {
+		newest = max(newest, s.CreatedAt)
+	}
+	age := now.Sub(time.Unix(newest, 0))
+	if age > maxAge {
+		return fmt.Errorf("the newest story is %s old, over -max-age %s; the source may have stopped indexing, not publishing", age.Round(time.Hour), maxAge)
 	}
 	return nil
 }

@@ -22,3 +22,13 @@ jobs:
             echo "::error::The live feed is $((age / 3600)) hours old; check the 'Build and publish feed' runs."
             exit 1
           fi
+      # A fresh feed can still hold only old stories, if the source stopped indexing new ones.
+      - name: Fail when the newest story in the live feed is more than two days old
+        run: |
+          newest=$(curl -fsS https://show-hacker-news-points.github.io/v2/index.json | jq '[.sites[][][3]] | max')
+          age=$(( $(date +%s) - newest ))
+          echo "The newest story is $((age / 3600)) hours old."
+          if [ "$age" -gt 172800 ]; then
+            echo "::error::The newest story in the live feed is $((age / 3600)) hours old; Algolia may have stopped indexing."
+            exit 1
+          fi

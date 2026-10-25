@@ -20,10 +20,10 @@ The extension downloads the whole list and checks pages on the device, so browsi
 go test ./...
 go run . -out public                                     # crawl Algolia (~1 min) and write all feeds
 go run . -out public -stories stories.json -save         # also keep the crawl for offline rebuilds
-go run . -out public -stories stories.json               # rebuild from a saved crawl
+go run . -out public -stories stories.json -max-age 0    # rebuild from a saved crawl
 ```
 
-The command refuses to write anything when the crawl finds fewer than `-min-stories` (default 20000). The previous robot kept publishing after its source broke, and shipped a 7.8 KB feed.
+The command refuses to write anything when the crawl finds fewer than `-min-stories` (default 20000), or when its newest story is older than `-max-age` (default 48 hours), which means the source stopped indexing new stories. The previous robot kept publishing after its source broke, and shipped a 7.8 KB feed.
 
 ## Publishing
 
