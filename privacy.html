@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Privacy policy: Reveal Top Hacker News Stories</title>
+    <style>
+        :root { color-scheme: light dark; --orange: #ff6600; }
+        body { max-width: 640px; margin: 48px auto; padding: 0 16px; font: 16px/1.6 system-ui, sans-serif; }
+        h1 { display: flex; align-items: center; gap: 10px; font-size: 22px; }
+        h2 { margin-top: 28px; font-size: 17px; }
+        .logo { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 5px; background: var(--orange); color: #fff; font-size: 14px; }
+    </style>
+</head>
+
+<body>
+    <h1><span class="logo">▲</span> Privacy policy</h1>
+    <p>For the <a href="https://chromewebstore.google.com/detail/hinpipjgmgkgadcckdnmhhdooolfapke">Reveal Top Hacker News Stories</a>
+        Chrome extension. Last updated October 25, 2026.</p>
+
+    <p>Short version: the extension doesn't collect anything about you, and it doesn't send the pages you visit
+        anywhere.</p>
+
+    <h2>What stays on your computer</h2>
+    <p>The extension checks each page you open against a list of top Hacker News stories that it keeps in your
+        browser. It stores these things locally, and nowhere else:</p>
+    <ul>
+        <li>the story list itself, and when it was last downloaded</li>
+        <li>your settings: the minimum points, whether the grey dot is on, and any sites you muted (Chrome may sync
+            these between your own devices if you have Chrome sync turned on)</li>
+        <li>a count of the pages you read this week that were on Hacker News, which the popup shows and which
+            resets every Monday</li>
+    </ul>
+    <p>Removing the extension deletes all of it.</p>
+
+    <h2>What goes over the network</h2>
+    <p>Once a day the extension downloads the story list from this website, which is hosted on GitHub Pages.
+        Everyone downloads the same files. Like any web request, it tells GitHub your IP address, but nothing about
+        which pages you read. GitHub's own privacy statement covers what they do with request logs.</p>
+    <p>A page address only leaves your browser when you click something that asks for it: <em>search</em> opens a
+        Hacker News search on Algolia with that address, and <em>submit</em> opens Hacker News' submit page with it.
+        Searching from the address bar only goes to Algolia if nothing in the local list matches and you press
+        Enter.</p>
+
+    <h2>What the extension doesn't do</h2>
+    <p>No analytics, no tracking, no ads, no accounts, no selling or sharing data, and no code loaded from
+        anywhere else.</p>
+
+    <h2>Questions</h2>
+    <p>Open an issue at <a href="https://github.com/Show-Hacker-News-Points/show-hacker-news-points.github.io/issues">github.com/Show-Hacker-News-Points/show-hacker-news-points.github.io</a>.
+        If this policy changes, the date at the top changes with it.</p>
+</body>
+
+</html>
