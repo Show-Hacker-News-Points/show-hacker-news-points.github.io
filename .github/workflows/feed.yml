@@ -29,9 +29,11 @@ jobs:
       # A failed or shrunken crawl stops here, and Pages keeps serving the last good feed.
       - run: go run . -out public
       - run: cp index.html public/
+      # A week of builds stays downloadable for comparing or redeploying after a bad crawl.
       - uses: actions/upload-pages-artifact@v4
         with:
           path: public
+          retention-days: 7
       # GitHub disables scheduled workflows after 60 days without repository activity,
       # and this workflow no longer commits, so it re-enables itself on every run.
       - run: gh workflow enable feed.yml
